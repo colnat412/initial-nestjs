@@ -6,6 +6,7 @@ import { Account } from "src/entity/schema/account.entity";
 import { Profile } from "src/entity/schema/profile.entity";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import * as fs from "fs";
 
 @Module({
   imports: [
@@ -14,8 +15,15 @@ import { ConfigService } from "@nestjs/config";
       global: true,
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>("JWT_SECRET"),
-        signOptions: { expiresIn: "60s" },
+        privateKey: fs.readFileSync("keys/private.pem", "utf8"),
+        publicKey: fs.readFileSync("keys/public.pem", "utf8"),
+        signOptions: {
+          algorithm: "RS256",
+          expiresIn: configService.get<string>("JWT_EXPIRES_IN") || "24h",
+        },
+        verifyOptions: {
+          algorithms: ["RS256"],
+        },
       }),
     }),
   ],

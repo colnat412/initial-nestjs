@@ -11,7 +11,7 @@ export const ValidatePipeConfig = new ValidationPipe({
     }));
 
     return new BadRequestException({
-      message: "Dữ liệu không hợp lệ",
+      message: "Validation failed",
       errors: formattedErrors,
     });
   },
