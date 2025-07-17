@@ -7,9 +7,12 @@ export class LoggerMiddleware implements NestMiddleware {
   private logger = new Logger("HTTP");
 
   use(req: Request, res: Response, next: NextFunction): void {
-    const { ip, method, originalUrl } = req;
-    const userAgent = req.get("user-agent") || "";
+    const { ip, method, originalUrl, headers } = req;
+    const userAgent = headers["user-agent"] || "";
+    const authHeader = headers["authorization"];
     const start = process.hrtime();
+
+    this.logger.debug(`🔐 Authorization Header: ${authHeader || "None"}`);
 
     res.on("finish", () => {
       const { statusCode } = res;
@@ -22,11 +25,13 @@ export class LoggerMiddleware implements NestMiddleware {
         `${method} ${originalUrl} ${statusCode} ${contentLength} - ${elapsedTimeInMilliseconds.toFixed(2)} ms`,
       );
     });
+
     res.on("error", (err) => {
       this.logger.error(
         `Error: ${err} ${method} ${originalUrl} ${userAgent} ${ip}`,
       );
     });
+
     next();
   }
 }

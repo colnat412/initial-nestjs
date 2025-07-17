@@ -1,10 +1,14 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Account } from "src/entity/schema/account.entity";
 import { Repository } from "typeorm";
-import { CreateAccount_RequestDto } from "./dto/request.dto";
+import { CreateAccount_RequestDto, Login_RequestDto } from "./dto/request.dto";
 import { CreateAccount_ResponseDto } from "./dto/response.dto";
 
 @Injectable()
@@ -51,7 +55,11 @@ export class AuthService {
     };
   }
 
-  async signIn(user: Account) {
+  async signIn(dto: Login_RequestDto) {
+    const user = await this.validateUser(dto.identifier, dto.password);
+    if (!user) {
+      throw new UnauthorizedException("Invalid credentials");
+    }
     const payload = {
       sub: user.id,
       email: user.email,
@@ -60,5 +68,9 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async getSomething() {
+    return "This is a placeholder response from AuthService.";
   }
 }

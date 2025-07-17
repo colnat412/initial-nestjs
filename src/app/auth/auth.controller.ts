@@ -1,13 +1,16 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
-  UnauthorizedException,
+  UseGuards,
 } from "@nestjs/common";
+import { JWTAuthGuard } from "src/common/guard/jwt-auth.guard";
 import { AuthService } from "./auth.service";
 import { CreateAccount_RequestDto, Login_RequestDto } from "./dto/request.dto";
 import { CreateAccount_ResponseDto } from "./dto/response.dto";
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 @Controller("auth")
 export class AuthController {
@@ -23,14 +26,14 @@ export class AuthController {
 
   @Post("login")
   @HttpCode(200)
-  async login(@Body() loginRequestDto: Login_RequestDto) {
-    const { identifier, password } = loginRequestDto;
-    const user = await this.AuthService.validateUser(identifier, password);
-    if (!user) {
-      throw new UnauthorizedException(
-        "Please check your email/phone and password.",
-      );
-    }
-    return this.AuthService.signIn(user);
+  async login(@Body() dto: Login_RequestDto) {
+    return await this.AuthService.signIn(dto);
+  }
+
+  @ApiBearerAuth("access-token")
+  @UseGuards(JWTAuthGuard)
+  @Get("something")
+  async getSomething() {
+    return this.AuthService.getSomething();
   }
 }

@@ -10,8 +10,8 @@ export const SwaggerBuilder = new DocumentBuilder()
       type: "http",
       scheme: "bearer",
       bearerFormat: "JWT",
-      // name: "Authorization",
-      // in: "header",
+      name: "Authorization",
+      in: "header",
     },
     "access-token",
   )

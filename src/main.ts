@@ -29,10 +29,9 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(ValidatePipeConfig);
 
-  const documentFactory = () =>
-    SwaggerModule.createDocument(app, SwaggerBuilder);
+  const document = SwaggerModule.createDocument(app, SwaggerBuilder);
 
-  SwaggerModule.setup("api", app, documentFactory, {
+  SwaggerModule.setup("api", app, document, {
     jsonDocumentUrl: "swagger/json",
     swaggerOptions: { persistAuthorization: true },
   });
