@@ -9,7 +9,10 @@ import * as bcrypt from "bcrypt";
 import { Account } from "src/entity/schema/account.entity";
 import { Repository } from "typeorm";
 import { CreateAccount_RequestDto, Login_RequestDto } from "./dto/request.dto";
-import { CreateAccount_ResponseDto } from "./dto/response.dto";
+import {
+  CreateAccount_ResponseDto,
+  Login_ResponseDto,
+} from "./dto/response.dto";
 
 @Injectable()
 export class AuthService {
@@ -55,7 +58,7 @@ export class AuthService {
     };
   }
 
-  async signIn(dto: Login_RequestDto) {
+  async signIn(dto: Login_RequestDto): Promise<Login_ResponseDto> {
     const user = await this.validateUser(dto.identifier, dto.password);
     if (!user) {
       throw new UnauthorizedException("Invalid credentials");
@@ -66,7 +69,7 @@ export class AuthService {
       phone: user.phone,
     };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
