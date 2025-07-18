@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as bcrypt from "bcrypt";
 import { Account } from "src/entity/schema/account.entity";
 import { Repository } from "typeorm";
 import { CreateAccount_RequestDto, Login_RequestDto } from "./dto/request.dto";
@@ -13,6 +12,7 @@ import {
   CreateAccount_ResponseDto,
   Login_ResponseDto,
 } from "./dto/response.dto";
+import { comparePassword, hashPassword } from "src/util/bcrypt.util";
 
 @Injectable()
 export class AuthService {
@@ -31,7 +31,7 @@ export class AuthService {
       return null;
     }
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await comparePassword(password, user.password);
     return match ? user : null;
   }
 
@@ -45,7 +45,7 @@ export class AuthService {
       throw new ConflictException("Email already exists");
     }
 
-    const passwordHash = await bcrypt.hash(data.password, 10);
+    const passwordHash = await hashPassword(data.password);
     const newUser = this.accountRepository.create({
       email: data.email,
       phone: data.phone,
