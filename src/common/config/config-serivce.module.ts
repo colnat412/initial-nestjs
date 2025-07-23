@@ -18,6 +18,7 @@ import * as Joi from "joi";
 
         // JWT
         JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.string().default("1d"),
 
         // Schema
         DATABASE_DROP_SCHEMA: Joi.boolean()

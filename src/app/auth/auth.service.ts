@@ -13,6 +13,7 @@ import {
   Login_ResponseDto,
 } from "./dto/response.dto";
 import { comparePassword, hashPassword } from "src/util/bcrypt.util";
+import { JwtPayload } from "./strategies/payload";
 
 @Injectable()
 export class AuthService {
@@ -22,17 +23,18 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(identifier: string, password: string) {
+  async validateUser(
+    identifier: string,
+    password: string,
+  ): Promise<Omit<Account, "password"> | null> {
     const user = await this.accountRepository.findOne({
       where: [{ email: identifier }, { phone: identifier }],
     });
-
-    if (!user) {
-      return null;
+    if (user && (await comparePassword(password, user.password))) {
+      const { password: _, ...result } = user;
+      return result;
     }
-
-    const match = await comparePassword(password, user.password);
-    return match ? user : null;
+    return null;
   }
 
   async register(
@@ -57,19 +59,18 @@ export class AuthService {
       phone: newUser.phone,
     };
   }
-
-  async signIn(dto: Login_RequestDto): Promise<Login_ResponseDto> {
-    const user = await this.validateUser(dto.identifier, dto.password);
-    if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
-    }
-    const payload = {
+  async login(
+    user: Omit<Account, "password">,
+  ): Promise<{ access_token: string }> {
+    console.log("Logging in user:", user);
+    const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       phone: user.phone,
     };
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload),
     };
   }
 

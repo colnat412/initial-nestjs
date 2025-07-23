@@ -6,7 +6,7 @@ import {
   BaseEntity as TypeORMBaseEntity,
 } from "typeorm";
 
-export abstract class BaseEntity extends TypeORMBaseEntity {
+export abstract class BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

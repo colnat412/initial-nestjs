@@ -16,7 +16,7 @@ export class CreateAccount_RequestDto {
   @IsNotEmpty({ message: "Password is required" })
   password: string;
 
-  @ApiProperty({ example: "+84123456789", required: true })
+  @ApiProperty({ example: "0123456789", required: true })
   @IsString({ message: "Phone number must be a string" })
   @IsNotEmpty({ message: "Phone number is required" })
   // @IsPhoneNumber("VN", { message: "Phone number is invalid" })

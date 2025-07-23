@@ -12,7 +12,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const authHeader = headers["authorization"];
     const start = process.hrtime();
 
-    this.logger.debug(`🔐 Authorization Header: ${authHeader || "None"}`);
+    // this.logger.debug(`🔐 Authorization Header: ${authHeader || "None"}`);
 
     res.on("finish", () => {
       const { statusCode } = res;
