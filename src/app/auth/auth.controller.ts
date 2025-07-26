@@ -10,9 +10,8 @@ import {
 import { ApiBearerAuth } from "@nestjs/swagger";
 // import { AuthGuard } from "src/common/guard/auth.guard";
 import { AuthService } from "./auth.service";
-import { CreateAccount_RequestDto, Login_RequestDto } from "./dto/request.dto";
+import { Login_RequestDto } from "./dto/request.dto";
 import {
-  CreateAccount_ResponseDto,
   Login_ResponseDto,
 } from "./dto/response.dto";
 import { ApiBaseResponse } from "src/common/decorator/api-base-response.decorator";
@@ -27,16 +26,6 @@ import { Account } from "src/common/decorator/account.decorator";
 @Controller("auth")
 export class AuthController {
   constructor(private readonly AuthService: AuthService) {}
-
-  @Post("register")
-  @HttpCode(200)
-  @ApiBaseResponse(CreateAccount_ResponseDto)
-  @ApiErrorResponses()
-  async register(
-    @Body() data: CreateAccount_RequestDto,
-  ): Promise<CreateAccount_ResponseDto> {
-    return await this.AuthService.register(data);
-  }
 
   @Post("login")
   @HttpCode(200)

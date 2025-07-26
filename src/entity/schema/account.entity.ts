@@ -16,7 +16,7 @@ export class Account extends BaseEntity {
   @Column({ type: "boolean", default: true })
   isActive: boolean;
 
-  @OneToOne(() => Profile, (profile) => profile.account)
+  @OneToOne(() => Profile, (profile) => profile.account, { cascade: true })
   @JoinColumn({ name: "profile_id" })
   profile: Profile;
 }

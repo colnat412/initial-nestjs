@@ -8,11 +8,12 @@ import { Profile } from "src/entity/schema/profile.entity";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { LocalStrategy } from "./strategies/local.strategy";
+import { Role } from "src/entity/schema/role.entity";
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([Account, Profile]),
+    TypeOrmModule.forFeature([Account, Profile, Role]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({

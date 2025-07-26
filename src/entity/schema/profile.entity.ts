@@ -4,16 +4,38 @@ import { Account } from "./account.entity";
 
 @Entity({ name: "profile" })
 export class Profile extends BaseEntity {
-  @Column({ type: "varchar", length: 255, name: "full_name" })
+  @Column({
+    type: "varchar",
+    length: 255,
+    name: "full_name",
+    nullable: false,
+    default: "",
+  })
   fullName: string;
 
-  @Column({ type: "varchar", length: 255, unique: true })
+  @Column({
+    type: "varchar",
+    length: 255,
+    unique: true,
+    nullable: false,
+    default: "",
+  })
   avatarUrl: string;
 
-  @Column({ type: "date", name: "date_of_birth" })
+  @Column({
+    type: "date",
+    name: "date_of_birth",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
   dateOfBirth: Date;
 
-  @Column({ type: "enum", enum: ["male", "female"] })
+  @Column({
+    type: "enum",
+    enum: ["male", "female"],
+    nullable: false,
+    default: "male",
+  })
   gender: "male" | "female";
 
   @OneToOne(() => Account, (account) => account.profile)

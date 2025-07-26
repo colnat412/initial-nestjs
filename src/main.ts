@@ -9,6 +9,8 @@ import { SwaggerBuilder } from "./common/config/swagger.config";
 import { ResponseInterceptor } from "./common/interceptor/response.interceptor";
 import { AllExceptionsFilter } from "./common/filter/all-exception.filter";
 import { ValidatePipeConfig } from "./common/pipe/validation.pipe";
+import { DataSource } from "typeorm";
+import { seedRoles } from "./seed/implement/role.seed";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
