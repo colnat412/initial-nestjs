@@ -11,6 +11,10 @@ import { AllExceptionsFilter } from "./common/filter/all-exception.filter";
 import { ValidatePipeConfig } from "./common/pipe/validation.pipe";
 import { DataSource } from "typeorm";
 import { seedRoles } from "./seed/implement/role.seed";
+import {
+  BadRequestResponseDto,
+  ErrorResponseDto,
+} from "./common/dto/swagger-schema/error-response.dto";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -31,7 +35,9 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(ValidatePipeConfig);
 
-  const document = SwaggerModule.createDocument(app, SwaggerBuilder);
+  const document = SwaggerModule.createDocument(app, SwaggerBuilder, {
+    extraModels: [ErrorResponseDto, BadRequestResponseDto],
+  });
 
   SwaggerModule.setup("api", app, document, {
     jsonDocumentUrl: "swagger/json",

@@ -1,6 +1,6 @@
-import { RoleEnum } from 'src/entity/enum/role.enum';
-import { Role } from 'src/entity/schema/role.entity';
-import { DataSource } from 'typeorm';
+import { RoleEnum } from "src/entity/enum/role.enum";
+import { Role } from "src/entity/schema/role.entity";
+import { DataSource } from "typeorm";
 
 export async function seedRoles(dataSource: DataSource) {
   const roleRepo = dataSource.getRepository(Role);
@@ -16,7 +16,7 @@ export async function seedRoles(dataSource: DataSource) {
         description: `${roleName} role`,
       });
       await roleRepo.save(role);
-      console.log(`✅ Seeded role: ${roleName}`);
     }
   }
+  console.log(`Seeded: Roles`);
 }

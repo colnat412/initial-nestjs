@@ -19,10 +19,6 @@ export class AuthService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
-    @InjectRepository(Profile)
-    private readonly profileRepository: Repository<Profile>,
-    @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -40,10 +36,12 @@ export class AuthService {
     return null;
   }
 
-  async login(
-    user: Omit<Account, "password">,
-  ): Promise<{ access_token: string }> {
-    console.log("Logging in user:", user);
+  async login(data: Login_RequestDto): Promise<{ access_token: string }> {
+    const user = await this.validateUser(data.identifier, data.password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
@@ -54,6 +52,7 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
 
   async getSomething() {
     return "This is a placeholder response from AuthService.";

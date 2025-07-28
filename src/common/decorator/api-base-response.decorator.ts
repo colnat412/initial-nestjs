@@ -1,7 +1,7 @@
 // decorators/api-base-response.decorator.ts
 import { applyDecorators, Type } from "@nestjs/common";
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
-import { BaseResponseDto } from "../dto/class/base-response.dto";
+import { BaseResponseDto } from "../dto/swagger-schema/base-response.dto";
 
 export function ApiBaseResponse<T extends Type<any>>(model: T | [T]) {
   const isArray = Array.isArray(model);
