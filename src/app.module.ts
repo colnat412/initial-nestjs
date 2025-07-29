@@ -5,11 +5,13 @@ import { PostgresModule } from "./common/config/postgres.database.module";
 import { LoggerMiddleware } from "./common/middleware/log.middleware";
 import { SeedService } from "./seed/seed.service";
 import { AccountModule } from "./app/account/account.module";
+import { I18nConfigModule } from "./common/config/i18n.module";
 
 @Module({
   imports: [
     ConfigServiceModule,
     PostgresModule,
+    I18nConfigModule,
     // Module Feature
     AuthModule,
     AccountModule,
