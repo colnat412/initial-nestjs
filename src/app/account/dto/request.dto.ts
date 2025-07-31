@@ -1,7 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from "class-validator";
 import { RoleEnum } from "src/entity/enum/role.enum";
 import { ScopeType } from "src/entity/enum/scope-type";
+import { IsNull } from "typeorm";
 
 export class CreateAccountResidential_RequestDto {
   @ApiProperty({ example: "user@gmail.com", required: true })
@@ -57,10 +65,10 @@ export class CreateAccount_RequestDto {
   @IsEnum(ScopeType, { message: "Scope type is invalid" })
   scopeType: ScopeType;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: "123e4567-e89b-12d3-a456-426614174000",
     required: false,
   })
-  @IsUUID("4", { message: "Scope ID must be a valid UUID" })
+  @IsOptional()
   scopeId?: string | null;
 }

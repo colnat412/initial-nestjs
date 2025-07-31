@@ -26,5 +26,5 @@ export class AccountRoles extends BaseEntity {
   scopeType: ScopeType;
 
   @Column({ nullable: true, type: "uuid", default: null, name: "scope_id" })
-  scopeId: number | null;
+  scopeId: string | null;
 }

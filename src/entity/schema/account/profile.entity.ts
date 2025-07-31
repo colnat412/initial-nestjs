@@ -16,7 +16,6 @@ export class Profile extends BaseEntity {
   @Column({
     type: "varchar",
     length: 255,
-    unique: true,
     nullable: false,
     default: "",
   })

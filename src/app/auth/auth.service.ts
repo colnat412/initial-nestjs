@@ -22,6 +22,7 @@ export class AuthService {
     const user = await this.accountRepository.findOne({
       where: [{ email: identifier }, { phone: identifier }],
     });
+
     if (user && (await comparePassword(password, user.password))) {
       const { password: _, ...result } = user;
       return result;
@@ -48,5 +49,12 @@ export class AuthService {
 
   async getSomething() {
     return "This is a placeholder response from AuthService.";
+  }
+
+  async getAccountById(id: string): Promise<Account | null> {
+    return await this.accountRepository.findOne({
+      where: { id },
+      relations: ["accountRoles"],
+    });
   }
 }

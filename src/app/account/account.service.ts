@@ -16,6 +16,7 @@ import { Account } from "src/entity/schema/account/account.entity";
 import { Profile } from "src/entity/schema/account/profile.entity";
 import { Role } from "src/entity/schema/account/role.entity";
 import { AccountRoles } from "src/entity/schema/account/account-roles.entity";
+import { ScopeType } from "src/entity/enum/scope-type";
 
 @Injectable()
 export class AccountService {
@@ -30,7 +31,7 @@ export class AccountService {
     private readonly roleRepository: Repository<Role>,
 
     @InjectRepository(AccountRoles)
-    private readonly accountBlockRoleRepository: Repository<AccountRoles>,
+    private readonly accountRoles: Repository<AccountRoles>,
 
     private dataSource: DataSource,
   ) {}
@@ -93,37 +94,55 @@ export class AccountService {
         phone: data.phone,
         password: passwordHash,
       });
-      await queryRunner.manager.save(newUser);
+
+      await queryRunner.manager.save(newUser); // Lưu account trước
 
       const profile = this.profileRepository.create({
         account: newUser,
       });
-      await queryRunner.manager.save(profile);
-
-      newUser.profile = profile;
-      await queryRunner.manager.save(newUser);
+      await queryRunner.manager.save(profile); // Chỉ cần lưu profile
 
       const role = await this.roleRepository.findOneBy({ name: data.role });
       if (!role) {
         throw new ConflictException("Role does not exist");
       }
 
-      // switch (data.scopeType) {
-      //   case ScopeType.BLOCK:
-      //     const block = await queryRunner.manager.findOne(Block, {
-      //       where: { id: data.scopeId },
-      //     });
-      //     if (!block) {
-      //       throw new ConflictException("Block does not exist");
-      //     }
-      //     newUser.block = block;
-      //     break;
+      switch (data.scopeType) {
+        case ScopeType.PROJECT: {
+          const accountRoles = this.accountRoles.create({
+            account: newUser,
+            role: role,
+            scopeType: data.scopeType,
+            scopeId: null,
+          });
+          await queryRunner.manager.save(accountRoles);
+          break;
+        }
+        case ScopeType.BLOCK: {
+          if (!data.scopeId) {
+            throw new ConflictException("Scope ID is required for BLOCK scope");
+          }
 
-      const accountBlockRole = this.accountBlockRoleRepository.create({
-        account: newUser,
-        role: role,
-      });
-      await queryRunner.manager.save(accountBlockRole);
+          const block = await queryRunner.manager.findOne(Block, {
+            where: { id: data.scopeId },
+          });
+          if (!block) {
+            throw new ConflictException("Block does not exist");
+          }
+
+          const accountRoles = this.accountRoles.create({
+            account: newUser,
+            role: role,
+            scopeType: data.scopeType,
+            scopeId: block.id,
+          });
+          await queryRunner.manager.save(accountRoles);
+          break;
+        }
+        default: {
+          throw new ConflictException("Invalid scope type");
+        }
+      }
 
       await queryRunner.commitTransaction();
 

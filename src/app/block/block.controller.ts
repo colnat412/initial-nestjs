@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ApiBaseResponse } from "src/common/decorator/api-swagger/api-base-response.decorator";
@@ -28,9 +29,16 @@ import { ApiPagination } from "src/common/decorator/api-swagger/api-pagination.d
 import { PaginatedResponseDto } from "src/common/dto/swagger-schema/pagination/pagination-response.dto";
 import { ApiPaginatedResponse } from "src/common/decorator/api-swagger/api-pagination-response.decorator";
 import { Block } from "src/entity/schema/block/block.entity";
+import { JwtAuthGuard } from "src/common/guard/jwt-auth.guard";
+import { RolesGuard } from "src/common/guard/roles.guard";
+import { RoleEnum } from "src/entity/enum/role.enum";
+import { Roles } from "src/common/decorator/roles.decorator";
+import { ScopeType } from "src/entity/enum/scope-type";
 
 @Controller("block")
 @ApiBearerAuth("access-token")
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles([RoleEnum.ADMINISTRATOR], ScopeType.PROJECT)
 export class BlockController {
   constructor(private readonly BlockService: BlockService) {}
 
