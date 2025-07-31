@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JWTStrategy } from "src/app/auth/strategies/jwt.strategy";
-import { Account } from "src/entity/schema/account.entity";
-import { Profile } from "src/entity/schema/profile.entity";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { LocalStrategy } from "./strategies/local.strategy";
-import { Role } from "src/entity/schema/role.entity";
+import { Account } from "src/entity/schema/account/account.entity";
+import { Profile } from "src/entity/schema/account/profile.entity";
+import { Role } from "src/entity/schema/account/role.entity";
 
 @Module({
   imports: [

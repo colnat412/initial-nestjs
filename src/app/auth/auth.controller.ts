@@ -11,7 +11,7 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 // import { AuthGuard } from "src/common/guard/auth.guard";
 import { I18nLang, I18nService } from "nestjs-i18n";
 import { Account } from "src/common/decorator/account.decorator";
-import { ApiBaseResponse } from "src/common/decorator/api-base-response.decorator";
+import { ApiBaseResponse } from "src/common/decorator/api-swagger/api-base-response.decorator";
 import { JwtAuthGuard } from "src/common/guard/jwt-auth.guard";
 import { LocalAuthGuard } from "src/common/guard/local-auth.guard";
 import { I18nTranslations } from "src/i18n/generated/i18n.generated";
@@ -51,7 +51,10 @@ export class AuthController {
 
   @Post("logout")
   @UseGuards(LocalAuthGuard)
-  async logout(@Request() req) {
-    return req.logout();
+  async logout(
+    @Request() req: { logout: () => void },
+  ): Promise<{ message: string }> {
+    req.logout();
+    return { message: "Logged out successfully" };
   }
 }
