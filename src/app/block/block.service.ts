@@ -5,11 +5,9 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Block } from "src/entity/schema/block/block.entity";
-import { ILike, Like, Not, Repository } from "typeorm";
+import { ILike, Like, Not, Repository, IsNull } from "typeorm";
 import {
   CreateBlock_RequestDto,
-  DeleteBlock_RequestDto,
-  GetBlock_RequestDto,
   PaginatedBlock_RequestDto,
   UpdateBlock_RequestDto,
 } from "./dto/request.dto";
@@ -17,6 +15,7 @@ import {
   CreateBlock_ResponseDto,
   DeleteBlock_ResponseDto,
   GetBlock_ResponseDto,
+  GetBlockActive_ResponseDto,
   PaginatedBlock_ResponseDto,
   UpdateBlock_ResponseDto,
 } from "./dto/response.dto";
@@ -67,8 +66,8 @@ export class BlockService {
     };
   }
 
-  async delete(id: DeleteBlock_RequestDto): Promise<DeleteBlock_ResponseDto> {
-    const block = await this.blockRepository.findOne({ where: { id: id.id } });
+  async delete(id: string): Promise<DeleteBlock_ResponseDto> {
+    const block = await this.blockRepository.findOne({ where: { id } });
     if (!block) {
       throw new NotFoundException("Block not found");
     }
@@ -79,8 +78,8 @@ export class BlockService {
     };
   }
 
-  async getBlock(id: GetBlock_RequestDto): Promise<GetBlock_ResponseDto> {
-    const block = await this.blockRepository.findOne({ where: { id: id.id } });
+  async getBlock(id: string): Promise<GetBlock_ResponseDto> {
+    const block = await this.blockRepository.findOne({ where: { id } });
     if (!block) {
       throw new NotFoundException("Block not found");
     }
@@ -110,7 +109,7 @@ export class BlockService {
       take: limit,
       order: { [sortBy]: sortOrder },
       where: {
-        name: ILike(`%${filter.name || ""}%`),
+        name: ILike(`%${filter.name}%`),
       },
     });
 
@@ -129,5 +128,23 @@ export class BlockService {
       pageSize: limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  async getActiveBlock(): Promise<GetBlockActive_ResponseDto[]> {
+    const blocks = await this.blockRepository.find({
+      where: { deletedAt: IsNull() },
+    });
+
+    if (!blocks || blocks.length === 0) {
+      throw new NotFoundException("No active block found");
+    }
+
+    return blocks.map((block) => ({
+      id: block.id,
+      name: block.name,
+      createdAt: block.createdAt,
+      updatedAt: block.updatedAt,
+      deletedAt: block.deletedAt,
+    }));
   }
 }

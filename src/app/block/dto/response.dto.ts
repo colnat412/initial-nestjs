@@ -1,27 +1,32 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { Expose } from "class-transformer";
+import { BaseEntityDto } from "src/common/dto/swagger-schema/base-entity.dto";
 
-export class CreateBlock_ResponseDto {
-  @ApiProperty()
-  id: string;
-
-  @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty()
-  updatedAt: Date;
-
-  @ApiProperty()
-  deletedAt?: Date | null;
-
+export class BaseBlock_ResponseDto extends PartialType(BaseEntityDto) {
   @ApiProperty({
     description: "The name of the block",
     example: "A",
   })
+  @Expose()
   name: string;
 }
 
+export class CreateBlock_ResponseDto extends PartialType(
+  BaseBlock_ResponseDto,
+) {}
+
 export class UpdateBlock_ResponseDto extends PartialType(
-  CreateBlock_ResponseDto,
+  BaseBlock_ResponseDto,
+) {}
+
+export class PaginatedBlock_ResponseDto extends PartialType(
+  BaseBlock_ResponseDto,
+) {}
+
+export class GetBlock_ResponseDto extends PartialType(BaseBlock_ResponseDto) {}
+
+export class GetBlockActive_ResponseDto extends PartialType(
+  BaseBlock_ResponseDto,
 ) {}
 
 export class DeleteBlock_ResponseDto {
@@ -37,11 +42,3 @@ export class DeleteBlock_ResponseDto {
   })
   message: string;
 }
-
-export class GetBlock_ResponseDto extends PartialType(
-  CreateBlock_ResponseDto,
-) {}
-
-export class PaginatedBlock_ResponseDto extends PartialType(
-  CreateBlock_ResponseDto,
-) {}

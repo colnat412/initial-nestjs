@@ -10,6 +10,16 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ApiBaseResponse } from "src/common/decorator/api-swagger/api-base-response.decorator";
+import { ApiPagination } from "src/common/decorator/api-swagger/api-pagination.decorator";
+import { Pagination } from "src/common/decorator/pagination.decorator";
+import { Roles } from "src/common/decorator/roles.decorator";
+import { PaginatedResponseDto } from "src/common/dto/swagger-schema/pagination/pagination-response.dto";
+import { PaginationQueryDto } from "src/common/dto/swagger-schema/pagination/pagination.dto";
+import { JwtAuthGuard } from "src/common/guard/jwt-auth.guard";
+import { RolesGuard } from "src/common/guard/roles.guard";
+import { RoleEnum } from "src/entity/enum/role.enum";
+import { ScopeType } from "src/entity/enum/scope-type";
+import { BlockService } from "./block.service";
 import {
   CreateBlock_RequestDto,
   PaginatedBlock_RequestDto,
@@ -19,34 +29,30 @@ import {
   CreateBlock_ResponseDto,
   DeleteBlock_ResponseDto,
   GetBlock_ResponseDto,
+  GetBlockActive_ResponseDto,
   PaginatedBlock_ResponseDto,
   UpdateBlock_ResponseDto,
 } from "./dto/response.dto";
-import { BlockService } from "./block.service";
-import { Pagination } from "src/common/decorator/pagination.decorator";
-import { PaginationQueryDto } from "src/common/dto/swagger-schema/pagination/pagination.dto";
-import { ApiPagination } from "src/common/decorator/api-swagger/api-pagination.decorator";
-import { PaginatedResponseDto } from "src/common/dto/swagger-schema/pagination/pagination-response.dto";
-import { ApiPaginatedResponse } from "src/common/decorator/api-swagger/api-pagination-response.decorator";
-import { Block } from "src/entity/schema/block/block.entity";
-import { JwtAuthGuard } from "src/common/guard/jwt-auth.guard";
-import { RolesGuard } from "src/common/guard/roles.guard";
-import { RoleEnum } from "src/entity/enum/role.enum";
-import { Roles } from "src/common/decorator/roles.decorator";
-import { ScopeType } from "src/entity/enum/scope-type";
 
 @Controller("block")
 @ApiBearerAuth("access-token")
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([RoleEnum.ADMINISTRATOR], ScopeType.PROJECT)
 export class BlockController {
-  constructor(private readonly BlockService: BlockService) {}
+  constructor(private readonly blockService: BlockService) {}
 
-  @Get("get/:id")
+  @Get("active")
+  @HttpCode(200)
+  @ApiBaseResponse(GetBlockActive_ResponseDto, { isArray: true })
+  async getActive(): Promise<GetBlockActive_ResponseDto[]> {
+    return await this.blockService.getActiveBlock();
+  }
+
+  @Get("getById/:id")
   @HttpCode(200)
   @ApiBaseResponse(GetBlock_ResponseDto)
   async get(@Param("id") id: string): Promise<GetBlock_ResponseDto> {
-    return await this.BlockService.getBlock({ id });
+    return await this.blockService.getBlock(id);
   }
 
   @Post("pagination")
@@ -59,7 +65,7 @@ export class BlockController {
     @Pagination() paginationQuery: PaginationQueryDto,
     @Body() filter: PaginatedBlock_RequestDto,
   ): Promise<PaginatedResponseDto<PaginatedBlock_ResponseDto>> {
-    return await this.BlockService.pagination(paginationQuery, filter);
+    return await this.blockService.pagination(paginationQuery, filter);
   }
 
   @Post("create")
@@ -68,7 +74,7 @@ export class BlockController {
   async create(
     @Body() data: CreateBlock_RequestDto,
   ): Promise<CreateBlock_ResponseDto> {
-    return await this.BlockService.create(data);
+    return await this.blockService.create(data);
   }
 
   @Post("update/:id")
@@ -78,13 +84,13 @@ export class BlockController {
     @Param("id") id: string,
     @Body() data: UpdateBlock_RequestDto,
   ): Promise<UpdateBlock_ResponseDto> {
-    return await this.BlockService.update(id, data);
+    return await this.blockService.update(id, data);
   }
 
   @Delete(":id")
   @HttpCode(200)
   @ApiBaseResponse(DeleteBlock_ResponseDto)
   async delete(@Param("id") id: string): Promise<DeleteBlock_ResponseDto> {
-    return await this.BlockService.delete({ id });
+    return await this.blockService.delete(id);
   }
 }

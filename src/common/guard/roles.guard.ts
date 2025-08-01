@@ -29,7 +29,6 @@ export class RolesGuard implements CanActivate {
     }>();
     const user = request.user;
     const scopeId = request.params.scopeId ?? null;
-    console.log(user, scopeId);
 
     if (!requiredRoles || !requiredScope) return true;
 
