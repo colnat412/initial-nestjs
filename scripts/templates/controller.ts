@@ -11,7 +11,7 @@ import { Create${className}_RequestDto } from "./dto/request.dto";
 import { Create${className}_ResponseDto } from "./dto/response.dto";
 import { ${className}Service } from "./${moduleName}.service";
 
-@Controller("${className}")
+@Controller("${className.toLowerCase()}")
 @ApiBearerAuth("access-token")
 export class ${className}Controller {
   constructor(private readonly ${className}Service: ${className}Service) {}

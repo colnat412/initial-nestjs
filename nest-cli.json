@@ -4,9 +4,15 @@
   "sourceRoot": "src/app",
   "generateOptions": {
     "spec": false
-    
   },
   "compilerOptions": {
+    "assets": [
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true,
+        "outDir": "dist/i18n"
+      }
+    ],
     "deleteOutDir": true,
     "plugins": [
       {

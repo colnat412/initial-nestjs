@@ -2,12 +2,13 @@ import { Module } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { AccountController } from "./account.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Role } from "src/entity/schema/role.entity";
-import { Profile } from "src/entity/schema/profile.entity";
-import { Account } from "src/entity/schema/account.entity";
+import { Account } from "src/entity/schema/account/account.entity";
+import { Profile } from "src/entity/schema/account/profile.entity";
+import { Role } from "src/entity/schema/account/role.entity";
+import { AccountRoles } from "src/entity/schema/account/account-roles.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Account, Profile, Role])],
+  imports: [TypeOrmModule.forFeature([Account, Profile, Role, AccountRoles])],
   controllers: [AccountController],
   providers: [AccountService],
 })

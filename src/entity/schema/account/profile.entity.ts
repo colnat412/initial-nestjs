@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
-import { BaseEntity } from "../base-entity.entity";
 import { Account } from "./account.entity";
+import { BaseEntity } from "src/entity/base-entity.entity";
 
 @Entity({ name: "profile" })
 export class Profile extends BaseEntity {
@@ -16,7 +16,6 @@ export class Profile extends BaseEntity {
   @Column({
     type: "varchar",
     length: 255,
-    unique: true,
     nullable: false,
     default: "",
   })

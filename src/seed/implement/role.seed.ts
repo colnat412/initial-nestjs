@@ -1,5 +1,5 @@
 import { RoleEnum } from "src/entity/enum/role.enum";
-import { Role } from "src/entity/schema/role.entity";
+import { Role } from "src/entity/schema/account/role.entity";
 import { DataSource } from "typeorm";
 
 export async function seedRoles(dataSource: DataSource) {

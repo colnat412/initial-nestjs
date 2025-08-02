@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
-import { BaseEntity } from "../base-entity.entity";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { Profile } from "./profile.entity";
+import { AccountRoles } from "./account-roles.entity";
+import { BaseEntity } from "src/entity/base-entity.entity";
 
 @Entity({ name: "account" })
 export class Account extends BaseEntity {
@@ -17,6 +18,8 @@ export class Account extends BaseEntity {
   isActive: boolean;
 
   @OneToOne(() => Profile, (profile) => profile.account, { cascade: true })
-  @JoinColumn({ name: "profile_id" })
   profile: Profile;
+
+  @OneToMany(() => AccountRoles, (accountRoles) => accountRoles.account)
+  accountRoles: AccountRoles[];
 }
